@@ -1,35 +1,45 @@
-import korlibs.time.*
+import korlibs.event.*
+import korlibs.image.color.*
 import korlibs.korge.*
 import korlibs.korge.scene.*
-import korlibs.korge.tween.*
 import korlibs.korge.view.*
-import korlibs.image.color.*
-import korlibs.image.format.*
-import korlibs.io.file.std.*
 import korlibs.math.geom.*
-import korlibs.math.interpolation.*
 
-suspend fun main() = Korge(windowSize = Size(512, 512), backgroundColor = Colors["#2b2b2b"]) {
-	val sceneContainer = sceneContainer()
+suspend fun main() = Korge(windowSize = Size(600, 600), backgroundColor = Colors["#2b2b2b"]) {
+    val sceneContainer = sceneContainer()
 
-	sceneContainer.changeTo { MyScene() }
+    sceneContainer.changeTo { MyScene() }
 }
 
 class MyScene : Scene() {
-	override suspend fun SContainer.sceneMain() {
-		val minDegrees = (-16).degrees
-		val maxDegrees = (+16).degrees
+    override suspend fun SContainer.sceneMain() {
 
-		val image = image(resourcesVfs["korge.png"].readBitmap()) {
-			rotation = maxDegrees
-			anchor(.5, .5)
-			scale(0.8)
-			position(256, 256)
-		}
+        val playerSpeed = 10.0;
 
-		while (true) {
-			image.tween(image::rotation[minDegrees], time = 1.seconds, easing = Easing.EASE_IN_OUT)
-			image.tween(image::rotation[maxDegrees], time = 1.seconds, easing = Easing.EASE_IN_OUT)
-		}
-	}
+        val player = solidRect(30, 30, color = Colors.BLUE)
+        player.xy(0, 0)
+        player.addUpdater {
+
+            val keys = views.input.keys
+            if (keys[Key.D]) {
+                x += playerSpeed
+            }
+
+            if (keys[Key.A]) {
+                x -= playerSpeed
+            }
+
+            if (keys[Key.W]) {
+                y -= playerSpeed
+            }
+
+            if (keys[Key.S]) {
+                y += playerSpeed
+            }
+        }
+        val enemy1 = solidRect(30, 30, color = Colors.RED)
+        enemy1.xy(100, 100)
+
+    }
 }
+
